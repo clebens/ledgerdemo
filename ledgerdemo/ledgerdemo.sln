@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ledgerdemo.Console", "ledgerdemo.Console\ledgerdemo.Console.csproj", "{C4111209-1E8B-40A4-8130-686573AB8B96}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ledgerdemo.ConsoleApp", "ledgerdemo.Console\ledgerdemo.ConsoleApp.csproj", "{C4111209-1E8B-40A4-8130-686573AB8B96}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ledgerdemo.Web", "ledgerdemo.Web\ledgerdemo.Web.csproj", "{CE49B257-7BA6-4DDB-B44B-E5FAC0B36E88}"
 EndProject
