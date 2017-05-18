@@ -1,4 +1,5 @@
-﻿using ledgerdemo.Services.DBTableTypes;
+﻿using ledgerdemo.Service;
+using ledgerdemo.Services.DBTableTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace ledgerdemo.Services.Account.Persistence
         }
 
         public accounts CreateAccount(accounts account) {
-            if (account.accountid != 0) throw new Exception("CreateAccount: Accountid must be empty.");
+            if (account.accountid != 0) throw new Exception("Accountid must be empty.");
             account.accountid = (DB.accounts.Count > 0) ? DB.accounts.Max(x => x.accountid) + 1 : 1;
             DB.accounts.Add(account);
             return account;
@@ -41,7 +42,7 @@ namespace ledgerdemo.Services.Account.Persistence
         }
 
         public transactions LogTransaction(transactions transaction) {
-            if (transaction.transactionid != 0) throw new Exception("CreateAccount: Accountid must be empty.");
+            if (transaction.transactionid != 0) throw new Exception("Accountid must be empty.");
             transaction.transactionid = (DB.transactions.Count > 0) ? DB.transactions.Max(x => x.transactionid) + 1 : 1;
             this.DB.transactions.Add(transaction);
             return transaction;

@@ -1,4 +1,5 @@
-﻿using ledgerdemo.Service.Account.DTOs;
+﻿using ledgerdemo.Service;
+using ledgerdemo.Service.Account.DTOs;
 using ledgerdemo.Services.Account.Persistence;
 using ledgerdemo.Services.DBTableTypes;
 using ledgerdemo.Services.DBTableTypes.ConstantTypes;
@@ -28,7 +29,7 @@ namespace ledgerdemo.Services.Account
 
         public void CreateAccountForUser(int userid) {
             if (AccountRepository.GetAccountsForUser(userid).Count > 0)
-                throw new Exception("Currently supporting only one account per user.");
+                throw new DisplayedException("Currently supporting only one account per user.");
 
 
             AccountRepository.CreateAccount(new accounts {
@@ -38,6 +39,7 @@ namespace ledgerdemo.Services.Account
         }
 
         public void Deposit(int accountid, decimal amount) {
+            if (amount <= 0) throw new DisplayedException("Illegal Withdrawal Amount.");
             var account = AccountRepository.GetAccount(accountid);
             account.balance += amount;
             transactions t = new transactions {
@@ -80,7 +82,9 @@ namespace ledgerdemo.Services.Account
         }
 
         public void Withdraw(int accountid, decimal amount) {
+            if (amount <= 0) throw new DisplayedException("Illegal Withdrawal Amount.");
             var account = AccountRepository.GetAccount(accountid);
+            if (amount > account.balance) throw new DisplayedException("Insufficient Funds for Withdrawal.");
             account.balance -= amount;
             transactions t = new transactions {
                 accountid = accountid,
