@@ -28,7 +28,7 @@ namespace ledgerdemo.ConsoleApp.Helpers {
 
         public static string Input(string entry, bool hide = false) {
             Console.WriteLine($"\n\n{entry}: ");
-            return Console.ReadLine();
+            return (hide) ? ReadLineHidden() : Console.ReadLine();
         }
     }
 }
