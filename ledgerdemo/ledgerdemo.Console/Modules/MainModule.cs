@@ -1,4 +1,5 @@
 ﻿using ledgerdemo.ConsoleApp.Helpers;
+using ledgerdemo.Service;
 using ledgerdemo.Services.Account;
 using ledgerdemo.Services.User;
 using ledgerdemo.Services.User.DTOs;
@@ -21,7 +22,7 @@ namespace ledgerdemo.ConsoleApp.Modules {
         
         public void CreateAccount() {
             var email = PromptGenerator.Input("Email");
-            var password = PromptGenerator.Input("Password");
+            var password = PromptGenerator.Input("Password", hide: true);
 
             var user = UserService.CreateUser(new Services.User.DTOs.CreateUserModel {
                 email = email,
@@ -34,7 +35,7 @@ namespace ledgerdemo.ConsoleApp.Modules {
 
         public UserViewModel Login() {
             var email = PromptGenerator.Input("Email");
-            var password = PromptGenerator.Input("Password");
+            var password = PromptGenerator.Input("Password", hide: true);
 
             if (UserService.AuthenticateUser(email, password))
                 return UserService.GetUserByEmail(email);
@@ -49,17 +50,23 @@ namespace ledgerdemo.ConsoleApp.Modules {
                         "Create Account",
                         "Manage Account"
                     });
-                switch (input) {
-                    case "1": CreateAccount(); break;
-                    case "2":
-                        var user = Login();
-                        if (user != null)
-                            AccountModule.AccountMenu(user);
-                        else
-                            Console.WriteLine("User login failed.");
-                        break;
-                    default:
-                        break;
+                try {
+                    switch (input) {
+                        case "1": CreateAccount(); break;
+                        case "2":
+                            var user = Login();
+                            if (user != null)
+                                AccountModule.AccountMenu(user);
+                            else
+                                Console.WriteLine("User login failed.");
+                            break;
+                        default:
+                            break;
+                    }
+                } catch (DisplayedException ex) {
+                    Console.WriteLine(ex.Message);
+                } catch (Exception ex) {
+                    Console.WriteLine("System error.");
                 }
             } while (input != "0");
         }

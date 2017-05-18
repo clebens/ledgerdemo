@@ -1,4 +1,5 @@
 ﻿using ledgerdemo.ConsoleApp.Helpers;
+using ledgerdemo.Service;
 using ledgerdemo.Services.Account;
 using ledgerdemo.Services.DBTableTypes.ConstantTypes;
 using ledgerdemo.Services.User.DTOs;
@@ -72,8 +73,10 @@ namespace ledgerdemo.ConsoleApp.Modules {
                         default:
                             break;
                     }
+                } catch (DisplayedException ex) {
+                    Console.WriteLine(ex.Message);
                 } catch (Exception ex) {
-
+                    Console.WriteLine("System error.");
                 }
             } while (input != "0");
         }

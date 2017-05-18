@@ -1,4 +1,5 @@
-﻿using ledgerdemo.Services.DBTableTypes;
+﻿using ledgerdemo.Service;
+using ledgerdemo.Services.DBTableTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace ledgerdemo.Services.User.Persistence
 
         public users CreateUser(users user) {
             if (user.userid != 0) throw new Exception("UserRepository: Created user must have empty userid.");
-            if (DB.users.Any(x => x.email == user.email)) throw new Exception("UserRepository: User with email already exists.");
+            if (DB.users.Any(x => x.email == user.email)) throw new DisplayedException("User with email already exists.");
             user.userid = (DB.users.Count > 0) ? DB.users.Max(x => x.userid) + 1 : 1;
             DB.users.Add(user);
             return user;

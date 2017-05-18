@@ -1,4 +1,5 @@
-﻿using ledgerdemo.Services.DBTableTypes;
+﻿using ledgerdemo.Service;
+using ledgerdemo.Services.DBTableTypes;
 using ledgerdemo.Services.User.DTOs;
 using ledgerdemo.Services.User.Persistence;
 using System;
@@ -63,7 +64,11 @@ namespace ledgerdemo.Services.User
             return ValidatePassword(password, dbuser.salt, dbuser.password);
         }
 
+        private void testPassword(string pw) {
+            if (pw.Length < 4) throw new DisplayedException("Password must be at least 4 characters long.");
+        }
         public UserViewModel CreateUser(CreateUserModel user) {
+            testPassword(user.password);
             var newpw = createpw(user.password);
             var dbuser = UserRepository.CreateUser(new users {
                 userid = 0,
