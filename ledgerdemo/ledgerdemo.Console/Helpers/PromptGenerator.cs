@@ -17,7 +17,7 @@ namespace ledgerdemo.ConsoleApp.Helpers {
         }
 
         public static string Menu(List<string> items) {
-            var str = "";
+            var str = "\n\n";
             for (var i = 0; i < items.Count; i++) {
                 str += $"{i + 1}. {items[i]}\n";
             }
