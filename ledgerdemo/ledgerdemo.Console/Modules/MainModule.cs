@@ -49,7 +49,7 @@ namespace ledgerdemo.ConsoleApp.Modules {
                 input = PromptGenerator.Menu(new List<string>() {
                         "Create Account",
                         "Manage Account"
-                    });
+                    }, title: "Main Menu");
                 try {
                     switch (input) {
                         case "1": CreateAccount(); break;

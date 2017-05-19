@@ -28,17 +28,18 @@ namespace ledgerdemo.ConsoleApp.Modules {
         }
 
         public void PrintBalance(int accountid) {
-            Console.WriteLine($"Balance: {AccountService.GetBalance(accountid)}");
+            Console.WriteLine($"\nBalance: {AccountService.GetBalance(accountid)}");
         }
 
         public void PrintTransactions(int accountid) {
             var transactions = AccountService.GetTransactionLogForAccount(accountid);
+            Console.WriteLine("");
             transactions.ForEach(x => {
                 Console.WriteLine(
                     $"id: {x.transactionid}, " +
                     $"type: {Enum.GetName(typeof(TransactionType), x.type)}, " +
                     $"adjustment: {x.adjustment}, " +
-                    $"time: {x.datecreated}\n");
+                    $"time: {x.datecreated}");
             });
         }
 
@@ -53,7 +54,7 @@ namespace ledgerdemo.ConsoleApp.Modules {
                         "Withdraw",
                         "List Transactions",
                         "Print Balance"
-                    });
+                    }, title: "Account Menu");
                 try {
                     switch (input) {
                         case "1":

@@ -16,13 +16,14 @@ namespace ledgerdemo.ConsoleApp.Helpers {
             return input;
         }
 
-        public static string Menu(List<string> items) {
+        public static string Menu(List<string> items, string title=null) {
             var str = "\n\n";
+            if (title != null) str += $"--- {title} ---\n";
             for (var i = 0; i < items.Count; i++) {
                 str += $"{i + 1}. {items[i]}\n";
             }
-            str += "->";
-            Console.WriteLine(str);
+            str += "(0 to exit) -> ";
+            Console.Write(str);
             return Console.ReadLine();
         }
 
