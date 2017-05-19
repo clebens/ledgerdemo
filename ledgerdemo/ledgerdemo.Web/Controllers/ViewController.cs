@@ -23,7 +23,7 @@ namespace ledgerdemo.Web.Controllers {
         [Route()]
         [Route("Index")]
         public ActionResult Index() {
-            if (getUserCookie() != null) return Redirect("/Account");
+            if (LoggedInUser != null) return Redirect("/Account");
             return View();
         }
 
@@ -34,18 +34,17 @@ namespace ledgerdemo.Web.Controllers {
 
         [Route("Account")]
         public ActionResult Account() {
-            var user = getUserCookie();
-            if (user == null || UserService.GetUserByEmail(user.email) == null) {
+            if (LoggedInUser == null || UserService.GetUserByEmail(LoggedInUser.email) == null) {
                 removeUserCookie();
                 return Redirect("/");
             }
-            ViewData["userid"] = user.userid;
+            ViewData["userid"] = LoggedInUser.userid;
             return View();
         }
 
         [Route("Login")]
         public ActionResult Login() {
-            if (getUserCookie() != null) return Redirect("/Account");
+            if (LoggedInUser != null) return Redirect("/Account");
             return View();
         }
 

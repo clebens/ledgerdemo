@@ -3,8 +3,8 @@
 }
 
 <div id="accountmanagement">
-    <h1>Account Details</h1>
-    <table>
+    <h1>Account Summary</h1>
+    <table class="table">
         <thead>
             <tr>
                 <th>id</th>
@@ -13,14 +13,14 @@
         </thead>
         <tbody>
             <tr>
-                <td>{{account.accountid}}</td>
-                <td>{{account.balance}}</td>
+                <th>{{account.accountid}}</th>
+                <td>${{account.balance.toFixed(2)}}</td>
             </tr>
         </tbody>
     </table>
 
     <h1>Transaction History</h1>
-    <table>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>type</th>
@@ -31,20 +31,34 @@
         <tbody>
             <tr v-for="t in transactionViews">
                 <td>{{t.type}}</td>
-                <td>{{t.adjustment}}</td>
+                <td v-bind:class="{'text-danger': t.type == 'Withdrawal'}">${{t.adjustment.toFixed(2)}}</td>
                 <td>{{t.datecreated}}</td>
             </tr>
         </tbody>
     </table>
     <br />
-    Deposit: <input v-model="depositAmount" /><button @@click="deposit">Deposit</button>
+    <div class="row">
+        <div class="col-xs-3">
+            <label for="depositinput">Deposit</label>
+            <input id="depositinput" class="form-control input-lg" v-model="depositAmount" />
+            <button class="btn btn-submit" @@click="deposit">Deposit</button>
+        </div>
+    </div>
     <br />
-    Withdraw: <input v-model="withdrawAmount" /><button @@click="withdraw">Withdraw</button>
-</div>
+    <div class="row">
+        <div class="col-xs-3">
+            <label for="withdrawinput">Withdraw</label>
+            <input id="depositinput" class="form-control input-lg" v-model="withdrawAmount" />
+            <button class="btn btn-submit" @@click="withdraw">Withdraw</button>
+            <div v-if="withdrawError" class="container bg-danger">
+                <p>{{withdrawError}}</p>
+            </div>
+        </div>
+    </div>
 
-@section scripts {
-    
-    <script>
+        @section scripts {
+
+            <script>
         $(function () {
             var userid = @((int)ViewData["userid"]);
             new Vue({
@@ -53,7 +67,9 @@
                         account: {},
                         transactions: [],
                         depositAmount: 0,
-                        withdrawAmount: 0
+                        withdrawAmount: 0,
+                        withdrawError: null,
+                        depositError: null
                     }
                 },
                 el: '#accountmanagement',
@@ -63,6 +79,8 @@
                             var types = { 1: "Deposit", 2: "Withdrawal" };
                             var rtn = $.extend({}, x);
                             rtn.type = types[rtn.type];
+                            if (rtn.type == "Withdrawal") rtn.adjustment *= -1;
+                            rtn.datecreated = moment(x.datecreated).format("hh:mm:ss A MM/DD/YYYY");
                             return rtn;
                         })
                     }
@@ -78,15 +96,23 @@
                     deposit: function () {
                         $.post("/API/Account/" + this.account.accountid + "/deposit", { amount: this.depositAmount },
                             function (response) {
-                                this.account = response.account
+                                this.depositAmount = 0;
+                                this.account = response.account;
                                 this.refreshTransactions();
                             }.bind(this));
                     },
                     withdraw: function () {
+                        this.withdrawError = null;
+
                         $.post("/API/Account/" + this.account.accountid + "/withdraw", { amount: this.withdrawAmount },
                             function (response) {
-                                this.account = response.account
+                                this.withdrawAmount = 0;
+                                this.account = response.account;
                                 this.refreshTransactions();
+                            }.bind(this)
+                        )
+                            .fail(function (response) {
+                                this.withdrawError = response.responseJSON.message;
                             }.bind(this));
                     },
                     refreshTransactions: function () {
@@ -97,5 +123,5 @@
                 }
             });
         })
-    </script>    
-}
+            </script>
+        }

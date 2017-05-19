@@ -202,6 +202,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Content\sb-admin\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

@@ -1,8 +1,10 @@
-﻿using ledgerdemo.Services.Account;
+﻿using ledgerdemo.Service;
+using ledgerdemo.Services.Account;
 using ledgerdemo.Services.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 
@@ -18,25 +20,34 @@ namespace ledgerdemo.Web.Controllers {
         }
 
         private bool checkUserAccountAuthorization(int accountid) {
-            var user = getUserCookie();
-            if (user == null) return false;
-            var account = AccountService.GetAccountForUser(user.userid);
+            if (LoggedInUser == null) return false;
+            var account = AccountService.GetAccountForUser(LoggedInUser.userid);
             if (accountid != account.accountid) return false;
             return true;
         }
 
         [Route("{accountid}/deposit")]
-        public ActionResult Deposit(int accountid, int amount) {
-            checkUserAccountAuthorization(accountid);
-            AccountService.Deposit(accountid, amount);
-            return Json(new { success = true, account = AccountService.GetAccount(accountid) });
+        public ActionResult Deposit(int accountid, decimal amount) {
+            try {
+                checkUserAccountAuthorization(accountid);
+                AccountService.Deposit(accountid, amount);
+                return Json(new { success = true, account = AccountService.GetAccount(accountid) });
+            } catch (DisplayedException ex) {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { success = true, message = ex.Message });
+            }
         }
 
         [Route("{accountid}/withdraw")]
-        public ActionResult Withdraw(int accountid, int amount) {
-            checkUserAccountAuthorization(accountid);
-            AccountService.Withdraw(accountid, amount);
-            return Json(new { success = true, account = AccountService.GetAccount(accountid) });
+        public ActionResult Withdraw(int accountid, decimal amount) {
+            try {
+                checkUserAccountAuthorization(accountid);
+                AccountService.Withdraw(accountid, amount);
+                return Json(new { success = true, account = AccountService.GetAccount(accountid) });
+            } catch (DisplayedException ex) {
+                Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         [HttpGet]

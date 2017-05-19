@@ -3,10 +3,24 @@
     ViewBag.Title = "Create Account";
 }
 
-<div id="create-account">
-    Email: <input v-model="email" type="text"/>
-    Password: <input v-model="password" type="password" />
-    <button @@click="login">Login</button>
+<div class="Jumbotron" id="create-account">
+    <div class="row">
+        <div class="col-xs-12">
+            <h1 class="centered">Create New User</h1>
+        </div>        
+    </div>
+    <div class="row"><div class="col-xs-4">
+        <label for="emailinput">Email</label>
+        <input id="emailinput" class="form-control input-lg" v-model="email" type="text" placeholder="Email Address" /><br />     
+    </div></div>
+    <div class="row"><div class="col-xs-4">
+        <label for="passwordinput">Password</label>
+        <input id="passwordinput" class="form-control input-lg" v-model="password" type="password" placeholder="Password" /><br />
+        
+    </div></div>
+    <div class="row"><div class="col-xs-4">
+        <button class="btn btn-success" @@click="create">Create Account</button>
+    </div></div>
 </div>
 
 @section scripts {
@@ -20,7 +34,7 @@
                 }
             },
             methods: {
-                login: function () {
+                create: function () {
                     $.post("API/User/CreateAccount", { email: this.email, password: this.password }, function (response) {
                         window.location = "/Account";
                     });

@@ -11,7 +11,16 @@ using System.Web.Mvc;
 
 namespace ledgerdemo.Web.Controllers {
     public class SharedController : Controller {
-        public SharedController() : base() { } 
+        public SharedController() : base() {
+        } 
+
+        protected UserViewModel LoggedInUser { get; private set; }
+
+        protected override void OnActionExecuting(ActionExecutingContext filterContext) {
+            base.OnActionExecuting(filterContext);
+            LoggedInUser = getUserCookie();
+            ViewBag.LoggedInUser = LoggedInUser;
+        }
 
         protected void removeUserCookie() {
             var c = new HttpCookie(GlobalConstants.AUTH_COOKIE_NAME);
@@ -19,7 +28,7 @@ namespace ledgerdemo.Web.Controllers {
             Response.Cookies.Add(c);
         }
 
-        protected UserViewModel getUserCookie() {
+        private UserViewModel getUserCookie() {
             try {
                 var authtoken = Request.Cookies.Get(GlobalConstants.AUTH_COOKIE_NAME);
                 if (authtoken == null) return null;
