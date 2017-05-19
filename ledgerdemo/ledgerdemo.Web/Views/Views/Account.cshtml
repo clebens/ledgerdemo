@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Account Management";
+}
+
+<div id="accountmanagement">
+    <h1>Account Details</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{account.accountid}}</td>
+                <td>{{account.balance}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h1>Transaction History</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>type</th>
+                <th>amount</th>
+                <th>time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="t in transactionViews">
+                <td>{{t.type}}</td>
+                <td>{{t.adjustment}}</td>
+                <td>{{t.datecreated}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <br />
+    Deposit: <input v-model="depositAmount" /><button @@click="deposit">Deposit</button>
+    <br />
+    Withdraw: <input v-model="withdrawAmount" /><button @@click="withdraw">Withdraw</button>
+</div>
+
+@section scripts {
+    
+    <script>
+        $(function () {
+            var userid = @((int)ViewData["userid"]);
+            new Vue({
+                data: function () {
+                    return {
+                        account: {},
+                        transactions: [],
+                        depositAmount: 0,
+                        withdrawAmount: 0
+                    }
+                },
+                el: '#accountmanagement',
+                computed: {
+                    transactionViews: function () {
+                        return this.transactions.map(function (x) {
+                            var types = { 1: "Deposit", 2: "Withdrawal" };
+                            var rtn = $.extend({}, x);
+                            rtn.type = types[rtn.type];
+                            return rtn;
+                        })
+                    }
+                },
+                created: function () {
+                    $.get("/API/Account/user/" + userid, function (response) {
+                        this.account = response;
+                        this.refreshTransactions();
+                    }.bind(this))
+
+                },
+                methods: {
+                    deposit: function () {
+                        $.post("/API/Account/" + this.account.accountid + "/deposit", { amount: this.depositAmount },
+                            function (response) {
+                                this.account = response.account
+                                this.refreshTransactions();
+                            }.bind(this));
+                    },
+                    withdraw: function () {
+                        $.post("/API/Account/" + this.account.accountid + "/withdraw", { amount: this.withdrawAmount },
+                            function (response) {
+                                this.account = response.account
+                                this.refreshTransactions();
+                            }.bind(this));
+                    },
+                    refreshTransactions: function () {
+                        $.get("/API/Account/" + this.account.accountid + "/transactions", function (response) {
+                            this.transactions = response;
+                        }.bind(this))
+                    }
+                }
+            });
+        })
+    </script>    
+}

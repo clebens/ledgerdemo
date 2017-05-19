@@ -18,7 +18,7 @@ namespace ledgerdemo.Services
 
         private ServiceFactory() {
             container = new Container();
-            container.Register<IDB, MockDB>();
+            container.Register<IDB, MockDB>(lifestyle: Lifestyle.Singleton);
 
             container.Register<IAccountRepository, AccountRepository>();
             container.Register<IAccountService, AccountService>();

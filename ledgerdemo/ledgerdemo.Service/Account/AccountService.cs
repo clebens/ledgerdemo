@@ -18,6 +18,7 @@ namespace ledgerdemo.Services.Account
         List<TransactionView> GetTransactionLogForAccount(int accountid);
         void CreateAccountForUser(int userid);
         AccountViewModel GetAccountForUser(int userid);
+        AccountViewModel GetAccount(int accountid);
     }
 
     public class AccountService : IAccountService {
@@ -52,6 +53,15 @@ namespace ledgerdemo.Services.Account
                 AccountRepository.UpdateAccount(account);
                 AccountRepository.LogTransaction(t);
             }
+        }
+
+        public AccountViewModel GetAccount(int accountid) {
+            var dbAccount = AccountRepository.GetAccount(accountid);
+            return new AccountViewModel {
+                accountid = dbAccount.accountid,
+                balance = dbAccount.balance,
+                userid = dbAccount.userid
+            };
         }
 
         public AccountViewModel GetAccountForUser(int userid) {

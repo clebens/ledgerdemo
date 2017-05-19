@@ -24,6 +24,7 @@ namespace ledgerdemo.Services.User
 
         public UserViewModel GetUserByEmail(string email) {
             var dbuser = UserRepository.GetUserByEmail(email);
+            if (dbuser == null) return null;
             return new UserViewModel {
                 email = dbuser.email,
                 userid = dbuser.userid
@@ -61,6 +62,7 @@ namespace ledgerdemo.Services.User
 
         public bool AuthenticateUser(string email, string password) {
             var dbuser = UserRepository.GetUserByEmail(email);
+            if (dbuser == null) return false;
             return ValidatePassword(password, dbuser.salt, dbuser.password);
         }
 
