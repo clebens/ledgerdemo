@@ -40,7 +40,7 @@ namespace ledgerdemo.Services.Account
         }
 
         public void Deposit(int accountid, decimal amount) {
-            if (amount <= 0) throw new DisplayedException("Illegal Withdrawal Amount.");
+            if (amount <= 0) throw new DisplayedException("Illegal Deposit Amount.");
             var account = AccountRepository.GetAccount(accountid);
             account.balance += amount;
             transactions t = new transactions {

@@ -42,6 +42,10 @@
             <label for="depositinput">Deposit</label>
             <input id="depositinput" class="form-control input-lg" v-model="depositAmount" />
             <button class="btn btn-submit" @@click="deposit">Deposit</button>
+            <div v-if="depositError" class="container text-danger">
+                <p>{{depositError}}</p>
+            </div>
+
         </div>
     </div>
     <br />
@@ -50,7 +54,7 @@
             <label for="withdrawinput">Withdraw</label>
             <input id="depositinput" class="form-control input-lg" v-model="withdrawAmount" />
             <button class="btn btn-submit" @@click="withdraw">Withdraw</button>
-            <div v-if="withdrawError" class="container bg-danger">
+            <div v-if="withdrawError" class="container text-danger">
                 <p>{{withdrawError}}</p>
             </div>
         </div>
@@ -94,11 +98,19 @@
                 },
                 methods: {
                     deposit: function () {
+                        this.depositError = null;
+
                         $.post("/API/Account/" + this.account.accountid + "/deposit", { amount: this.depositAmount },
                             function (response) {
                                 this.depositAmount = 0;
                                 this.account = response.account;
                                 this.refreshTransactions();
+                            }.bind(this))
+                            .fail(function (response) {
+                                this.depositError =
+                                    (response.responseJSON && response.responseJSON.message) ?
+                                        response.responseJSON.message :
+                                        "Error processing deposit";
                             }.bind(this));
                     },
                     withdraw: function () {
@@ -112,7 +124,10 @@
                             }.bind(this)
                         )
                             .fail(function (response) {
-                                this.withdrawError = response.responseJSON.message;
+                                this.withdrawError = (response.responseJSON && response.responseJSON.message) ?
+                                    response.responseJSON.message :
+                                    "Error processing withdrawal";
+;
                             }.bind(this));
                     },
                     refreshTransactions: function () {
