@@ -11,7 +11,7 @@
     </div>
     <div class="row"><div class="col-xs-4">
         <label for="emailinput">Email</label>
-        <input id="emailinput" class="form-control input-lg" v-model="email" type="text" placeholder="Email Address" /><br />     
+        <input id="emailinput" class="form-control input-lg" v-model="email" type="text" placeholder="Email Address" /><br /> 
     </div></div>
     <div class="row"><div class="col-xs-4">
         <label for="passwordinput">Password</label>
@@ -20,6 +20,8 @@
     </div></div>
     <div class="row"><div class="col-xs-4">
         <button class="btn btn-success" @@click="create">Create Account</button>
+        <div v-if="createAccountError" class="text-danger">{{createAccountError}}</div>
+
     </div></div>
 </div>
 
@@ -30,14 +32,22 @@
             data: function () {
                 return {
                     email: null,
-                    password: null
+                    password: null,
+                    createAccountError: null
                 }
             },
             methods: {
                 create: function () {
+                    this.createAccountError = null;
+
                     $.post("API/User/CreateAccount", { email: this.email, password: this.password }, function (response) {
                         window.location = "/Account";
-                    });
+                    })
+                        .fail(function (response) {
+                            this.createAccountError = (response.responseJSON && response.responseJSON.message) ?
+                                response.responseJSON.message :
+                                "Error creating account";
+                        }.bind(this));
                 }
             }
         })

@@ -1,4 +1,5 @@
-﻿using ledgerdemo.Services.Account;
+﻿using ledgerdemo.Service;
+using ledgerdemo.Services.Account;
 using ledgerdemo.Services.User;
 using ledgerdemo.Services.User.DTOs;
 using Newtonsoft.Json;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
@@ -54,13 +56,18 @@ namespace ledgerdemo.Web.Controllers {
         [Route("CreateAccount")]
         [HttpPost]
         public ActionResult CreateAccount(string email, string password) {
-            var user = UserService.CreateUser(new CreateUserModel {
-                email = email,
-                password = password
-            });
-            AccountService.CreateAccountForUser(user.userid);
-            addAuthCookie(email);
-            return Json(new { success = true });
+            try {
+                var user = UserService.CreateUser(new CreateUserModel {
+                    email = email,
+                    password = password
+                });
+                AccountService.CreateAccountForUser(user.userid);
+                addAuthCookie(email);
+                return Json(new { success = true });
+            } catch (DisplayedException ex) {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { success = false, message = ex.Message });
+            }
         }
 
         [Route("Login")]

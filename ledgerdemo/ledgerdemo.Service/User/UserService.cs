@@ -4,6 +4,7 @@ using ledgerdemo.Services.User.DTOs;
 using ledgerdemo.Services.User.Persistence;
 using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -22,6 +23,15 @@ namespace ledgerdemo.Services.User
             this.UserRepository = userRepository;
         }
 
+        private bool validateEmail(string emailaddress) {
+            try {
+                MailAddress m = new MailAddress(emailaddress);
+
+                return true;
+            } catch (FormatException) {
+                return false;
+            }
+        }
         public UserViewModel GetUserByEmail(string email) {
             var dbuser = UserRepository.GetUserByEmail(email);
             if (dbuser == null) return null;
@@ -70,6 +80,9 @@ namespace ledgerdemo.Services.User
             if (pw.Length < 4) throw new DisplayedException("Password must be at least 4 characters long.");
         }
         public UserViewModel CreateUser(CreateUserModel user) {
+            if (!validateEmail(user.email))
+                throw new DisplayedException("Invalid email address.");
+
             testPassword(user.password);
             var newpw = createpw(user.password);
             var dbuser = UserRepository.CreateUser(new users {
