@@ -3,7 +3,7 @@
 ### Colin Lebens
 
 ## Summary
-Provides a very simple banking service that provides a service layer that is deployable with both Console and Web interfaces. 
+Provides a very simple banking service that provides a service layer that is deployable with both Windows Console and Web interfaces. 
 
 The following functionalities are supported:
 - Account Creation and Login
