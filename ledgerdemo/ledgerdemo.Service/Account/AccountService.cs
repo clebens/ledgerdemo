@@ -40,7 +40,8 @@ namespace ledgerdemo.Services.Account
         }
 
         public void Deposit(int accountid, decimal amount) {
-            if (amount <= 0) throw new DisplayedException("Illegal Deposit Amount.");
+            if (amount < 0.01M) throw new DisplayedException("Illegal Deposit Amount.");
+            if (getPostDecimalDigitCount(amount) > 2) throw new DisplayedException("Must Deposit in .01 Increments.");
             var account = AccountRepository.GetAccount(accountid);
             account.balance += amount;
             transactions t = new transactions {
@@ -91,8 +92,13 @@ namespace ledgerdemo.Services.Account
             }).ToList();
         }
 
+        private int getPostDecimalDigitCount(decimal v) {
+            return BitConverter.GetBytes(decimal.GetBits((decimal)(double)v)[3])[2];
+        }
+
         public void Withdraw(int accountid, decimal amount) {
-            if (amount <= 0) throw new DisplayedException("Illegal Withdrawal Amount.");
+            if (amount < 0.01M) throw new DisplayedException("Illegal Withdrawal Amount.");
+            if (getPostDecimalDigitCount(amount) > 2) throw new DisplayedException("Must Withdraw in .01 Increments.");
             var account = AccountRepository.GetAccount(accountid);
             if (amount > account.balance) throw new DisplayedException("Insufficient Funds for Withdrawal.");
             account.balance -= amount;
